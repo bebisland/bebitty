@@ -1,48 +1,38 @@
 ﻿using Raylib_cs;
+using static Raylib_cs.ConfigFlags;
+using static Raylib_cs.Raylib;
 
 internal static class Bebitty
 {
-    private static readonly Bebis Bebis = new();
-
     private static void Main()
     {
-        Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.TransparentWindow | ConfigFlags.VSyncHint);
-        Raylib.InitWindow(1000, 600, "Bebitty");
-        Raylib.SetExitKey(KeyboardKey.Null);
+        SetTraceLogLevel(TraceLogLevel.Error);
+        SetConfigFlags(ResizableWindow | TransparentWindow | VSyncHint);
+        InitWindow(1000, 600, "Bebitty");
+        SetExitKey(KeyboardKey.Null);
 
-        Init();
+        Status.AtlasSize   = (int)Config.Terminal.FontSize;
+        Status.Font        = LoadFontEx(Config.Terminal.Font, Status.AtlasSize, Codepoints.Array, Codepoints.Count);
+        Status.BaseAdvance = MeasureTextEx(Status.Font, "M", Status.AtlasSize, 0).X;
 
-        while (!Raylib.WindowShouldClose())
+        Terminal.XTerm.Write("Welcome to Bebitty!");
+
+        while (!WindowShouldClose())
         {
-            Update();
+            Time.Update();
+            Screen.Update();
 
-            Raylib.BeginDrawing();
-            Raylib.ClearBackground(new Color(10, 10, 0, 240));
+            BeginDrawing();
+            ClearBackground(new Color(10, 10, 0, 240));
 
-            Draw();
+            Terminal.Draw();
+            Bebis.Draw();
 
-            Raylib.EndDrawing();
+            EndDrawing();
         }
 
-        Close();
-
-        Raylib.CloseWindow();
-    }
-
-    private static void Init() { }
-
-    private static void Update()
-    {
-        Screen.Update();
-    }
-
-    private static void Draw()
-    {
-        Bebis.Draw();
-    }
-
-    private static void Close()
-    {
         Bebis.Dispose();
+
+        CloseWindow();
     }
 }

@@ -23,13 +23,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Raylib-cs" Version="8.1.0"/>
+		<PackageReference Include="XTerm.NET" Version="3.0.2"/>
 		<RuntimeHostConfigurationOption Include="System.GC.ConserveMemory" Value="9"/>
 		<RuntimeHostConfigurationOption Include="System.GC.RetainVM" Value="false"/>
 	</ItemGroup>
 
 	<PropertyGroup>
 		<AppName>bebitty</AppName>
-		<AppVersion>0.0.2</AppVersion>
+		<AppVersion>0.0.3</AppVersion>
 		<AppRepo>https://github.com/bebisland/$(AppName)</AppRepo>
 		<AssemblyName>$(AppName)</AssemblyName>
 		<RootNamespace>$(AppName)</RootNamespace>
