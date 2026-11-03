@@ -14,9 +14,47 @@ internal static class Terminal
 
     static Terminal()
     {
+        Console.WriteLine(Config.Colors.Foreground.ToString());
+
         XTerm = new XTerm.Terminal
         (
-            new TerminalOptions { Cols = Status.Cols, Rows = Status.Rows, Scrollback = Config.Terminal.MaxScrollback }
+            new TerminalOptions
+            {
+                Cols                       = Status.Cols,
+                Rows                       = Status.Rows,
+                Scrollback                 = Config.Terminal.MaxScrollback,
+                SixelEnabled               = false,
+                KittyGraphicsEnabled       = false,
+                ITerm2ImagesEnabled        = false,
+                KittyKeyboardEnabled       = false,
+                PointerShapesEnabled       = false,
+                KittyNotificationsEnabled  = false,
+                ClipboardReadEnabled       = false,
+                BellSound                  = false,
+                DrawBoldTextInBrightColors = false,
+                Theme = new ThemeOptions
+                {
+                    Foreground    = $"#{Config.Colors.Foreground:X6}",
+                    Background    = $"#{Config.Colors.Background:X6}",
+                    Cursor        = $"#{Config.Colors.Cursor:X6}",
+                    Black         = $"#{Config.Colors.Black:X6}",
+                    Red           = $"#{Config.Colors.Red:X6}",
+                    Green         = $"#{Config.Colors.Green:X6}",
+                    Yellow        = $"#{Config.Colors.Yellow:X6}",
+                    Blue          = $"#{Config.Colors.Blue:X6}",
+                    Magenta       = $"#{Config.Colors.Magenta:X6}",
+                    Cyan          = $"#{Config.Colors.Cyan:X6}",
+                    White         = $"#{Config.Colors.White:X6}",
+                    BrightBlack   = $"#{Config.Colors.BrightBlack:X6}",
+                    BrightRed     = $"#{Config.Colors.BrightRed:X6}",
+                    BrightGreen   = $"#{Config.Colors.BrightGreen:X6}",
+                    BrightYellow  = $"#{Config.Colors.BrightYellow:X6}",
+                    BrightBlue    = $"#{Config.Colors.BrightBlue:X6}",
+                    BrightMagenta = $"#{Config.Colors.BrightMagenta:X6}",
+                    BrightCyan    = $"#{Config.Colors.BrightCyan:X6}",
+                    BrightWhite   = $"#{Config.Colors.BrightWhite:X6}"
+                }
+            }
         );
 
         XTerm.DataReceived += (_, args) => Reply?.Invoke(args.Data);
@@ -39,7 +77,10 @@ internal static class Terminal
         var cellHeightPx = (int)Status.CellSize.Y;
 
         DrawChar(first, cellHeightPx, false, true);
-        DrawChar(first, cellHeightPx, true,  false);
+
+        Cursor.Draw();
+
+        DrawChar(first, cellHeightPx, true, false);
     }
 
     private static void DrawChar(int first, int cellHeightPx, bool drawForeground, bool drawBackground)
