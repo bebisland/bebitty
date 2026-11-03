@@ -14,6 +14,8 @@ internal static class Terminal
     static Terminal()
     {
         XTerm = new XTerm.Terminal(new TerminalOptions { Cols = Status.Cols, Rows = Status.Rows });
+
+        XTerm.DataReceived += (_, args) => Reply?.Invoke(args.Data);
     }
 
     private static BufferLine? GetLine(int absoluteLine)

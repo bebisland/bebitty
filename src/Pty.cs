@@ -39,20 +39,13 @@ internal static class Pty
                 {
                     var buffer = new byte[16384];
 
-                    try
+                    while (true)
                     {
-                        while (true)
-                        {
-                            var bytesRead = Connection.ReaderStream.Read(buffer, 0, buffer.Length);
-                            if (bytesRead <= 0)
-                                break;
+                        var bytesRead = Connection.ReaderStream.Read(buffer, 0, buffer.Length);
+                        if (bytesRead <= 0)
+                            break;
 
-                            Terminal.XTerm.Write(buffer.AsSpan(0, bytesRead));
-                        }
-                    }
-                    catch
-                    {
-                        // Kabuk kapandığında akış EIO/IOException ile bitebilir; bu normal bir çıkıştır.
+                        Terminal.XTerm.Write(buffer.AsSpan(0, bytesRead));
                     }
 
                     if (Interlocked.Exchange(ref Status.ExitSignalled, 1) != 0)

@@ -1,4 +1,5 @@
 using Raylib_cs;
+using static Raylib_cs.Raylib;
 
 internal static class Util
 {
@@ -13,5 +14,10 @@ internal static class Util
         var left  = (int)MathF.Round(Config.Terminal.PaddingX + column          * gridCellWidth);
         var right = (int)MathF.Round(Config.Terminal.PaddingX + (column + span) * gridCellWidth);
         return new(left, right - left);
+    }
+
+    public static bool Pressed(KeyboardKey key)
+    {
+        return IsKeyPressed(key) || IsKeyPressedRepeat(key);
     }
 }
