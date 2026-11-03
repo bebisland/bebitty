@@ -4,7 +4,7 @@ using Porta.Pty;
 
 internal static class Pty
 {
-    private static readonly IPtyConnection? Connection;
+    public static readonly IPtyConnection? Connection;
 
     static Pty()
     {

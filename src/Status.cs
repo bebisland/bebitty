@@ -26,6 +26,9 @@ internal static class Status
     public static bool Exited;
     public static int  ExitSignalled;
 
+    // Cells
+    public static Vector2 CellSize;
+
     static Status()
     {
         AddCodepoints(32,    126);   // ASCII
@@ -41,14 +44,16 @@ internal static class Status
         FontBaseAdvance = MeasureTextEx(Font, "M", FontAtlasSize, 0).X;
     }
 
-    // Cells
-    public static Vector2 CellSize =>
-        new(FontBaseAdvance * Config.Terminal.FontSize / FontAtlasSize, MathF.Ceiling(Config.Terminal.FontSize * 1.2f));
-
     public static void Update()
     {
         ScreenWidth  = GetScreenWidth();
         ScreenHeight = GetScreenHeight();
+
+        CellSize = new
+        (
+            FontBaseAdvance * Config.Terminal.FontSize / FontAtlasSize,
+            MathF.Ceiling(Config.Terminal.FontSize * 1.2f)
+        );
 
         Cols = Math.Max(2, (int)((ScreenWidth  - Config.Terminal.PaddingX * 2) / CellSize.X));
         Rows = Math.Max(2, (int)((ScreenHeight - Config.Terminal.PaddingY * 2) / CellSize.Y));

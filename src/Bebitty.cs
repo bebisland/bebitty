@@ -22,6 +22,12 @@ internal static class Bebitty
 
             Input();
 
+            if (Status.Cols != Terminal.XTerm.Cols || Status.Rows != Terminal.XTerm.Rows)
+            {
+                Terminal.XTerm.Resize(Status.Cols, Status.Rows);
+                Pty.Connection?.Resize(Terminal.XTerm.Cols, Terminal.XTerm.Rows);
+            }
+
             BeginDrawing();
             ClearBackground(new Color(10, 10, 0, 240));
 
