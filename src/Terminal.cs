@@ -78,15 +78,99 @@ internal static class Terminal
                     continue;
 
                 var baseColor = Rgb(foreground, cell.Attributes.IsDim() ? (byte)140 : (byte)255);
-                DrawCell(cell, bounds.X, cellTop, cellHeightPx, Config.Terminal.FontSize, baseColor);
+                DrawCell(cell, bounds.X, cellTop, bounds.Y, cellHeightPx, Config.Terminal.FontSize, baseColor);
             }
         }
     }
 
-    private static void DrawCell(in BufferCell cell, int left, int top, int height, float fontSize, Color color)
+    private static void DrawCell(in BufferCell cell,
+                                 int           left,
+                                 int           top,
+                                 int           width,
+                                 int           height,
+                                 float         fontSize,
+                                 Color         color)
     {
-        var textPosition = new Vector2(left, top + (height - fontSize) / 2f);
-        DrawTextCodepoint(Status.Font, cell.CodePoint, textPosition, fontSize, color);
+        DrawCell(cell.CodePoint, left, top, width, height, fontSize, color, cell.Attributes.IsBold());
+
+        if (cell.Attributes.IsUnderline())
+            DrawRectangle(left, top + height - 3, width, 1, color);
+        if (cell.Attributes.IsStrikethrough())
+            DrawRectangle(left, top + height / 2, width, 1, color);
+    }
+
+    private static void DrawCell(int   codepoint,
+                                 int   left,
+                                 int   top,
+                                 int   width,
+                                 int   height,
+                                 float fontSize,
+                                 Color color,
+                                 bool  bold = false)
+    {
+        switch (codepoint)
+        {
+            case <= 32:
+                return;
+
+            case < 9600 or > 9621:
+            {
+                var textPosition = new Vector2(left, top + (height - fontSize) / 2f);
+                DrawTextCodepoint(Status.Font, codepoint, textPosition, fontSize, color);
+
+                if (bold)
+                    DrawTextCodepoint
+                        (Status.Font, codepoint, new Vector2(textPosition.X + 1, textPosition.Y), fontSize, color);
+
+                return;
+            }
+
+            default:
+                switch (codepoint)
+                {
+                    case 9600:
+                        DrawRectangle(left, top, width, height / 2, color);
+                        return;
+
+                    case >= 9601 and <= 9608:
+                    {
+                        var barHeight = (int)MathF.Round(height * (codepoint - 9600) / 8f);
+                        DrawRectangle(left, top + height - barHeight, width, barHeight, color);
+                        return;
+                    }
+
+                    case >= 9609 and <= 9615:
+                    {
+                        var barWidth = (int)MathF.Round(width * (9616 - codepoint) / 8f);
+                        DrawRectangle(left, top, barWidth, height, color);
+                        return;
+                    }
+
+                    case 9616:
+                        DrawRectangle(left + width / 2, top, width - width / 2, height, color);
+                        return;
+
+                    case 9617:
+                    case 9618:
+                    case 9619:
+                    {
+                        var alpha = (byte)(color.A * (codepoint - 9616) / 4);
+                        DrawRectangle(left, top, width, height, new Color(color.R, color.G, color.B, alpha));
+                        return;
+                    }
+
+                    case 9620:
+                        DrawRectangle(left, top, width, Math.Max(1, height / 8), color);
+                        return;
+
+                    case 9621:
+                        DrawRectangle
+                            (left + width - Math.Max(1, width / 8), top, Math.Max(1, width / 8), height, color);
+                        return;
+                }
+
+                break;
+        }
     }
 
     private static void ResolveColors(ColorSnapshot colors,
