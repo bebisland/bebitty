@@ -81,6 +81,7 @@ internal static class Pty
 
     public static void Send(string data)
     {
+        Status.Scroll = 0;
         Write(data);
     }
 }

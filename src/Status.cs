@@ -4,26 +4,22 @@ using static Raylib_cs.Raylib;
 
 internal static class Status
 {
-    // Font
     public static           Font  Font;
     private static readonly int   FontAtlasSize;
     private static readonly float FontBaseAdvance;
 
-    // Screen
     public static int ScreenWidth;
     public static int ScreenHeight;
 
-    public static int Cols;
-    public static int Rows;
-
-    // Time
     public static float Time;
 
-    // Pty
     public static bool Exited;
     public static int  ExitSignalled;
 
-    // Cells
+    public static int Cols;
+    public static int Rows;
+    public static int Scroll;
+
     public static Vector2 CellSize;
 
     static Status()
@@ -31,6 +27,11 @@ internal static class Status
         FontAtlasSize = (int)Config.Terminal.FontSize;
         Font = LoadFontEx(Config.Terminal.Font, FontAtlasSize, [.. KeyInfo.Codepoints], KeyInfo.Codepoints.Count);
         FontBaseAdvance = MeasureTextEx(Font, "M", FontAtlasSize, 0).X;
+    }
+
+    public static void LimitScroll()
+    {
+        Scroll = Math.Clamp(Scroll, 0, Math.Max(0, Terminal.XTerm.Buffer.YBase));
     }
 
     public static void Update()

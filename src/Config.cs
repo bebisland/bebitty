@@ -7,6 +7,8 @@ internal static class Config
 
         public const float PaddingX = 8f;
         public const float PaddingY = 6f;
+
+        public const int MaxScrollback = 5000;
     }
 
     public static class Colors

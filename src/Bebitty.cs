@@ -51,6 +51,37 @@ internal static class Bebitty
 
         var modifier = 1 + (shift ? 1 : 0) + (alt ? 2 : 0) + (ctrl ? 4 : 0);
 
+        // Wheel
+        var wheel = GetMouseWheelMove();
+
+        if (wheel != 0)
+        {
+            var direction = Math.Sign(wheel);
+
+            if (Terminal.XTerm.IsAlternateBufferActive)
+            {
+                var sequence = (Terminal.XTerm.ApplicationCursorKeys ? "\eO" : "\e[") + (direction > 0 ? "A" : "B");
+
+                Pty.Send(sequence + sequence + sequence);
+            }
+            else
+            {
+                Status.Scroll += direction * 3;
+            }
+        }
+
+        // Scrollback
+        switch (shift)
+        {
+            case true when Pressed(KeyboardKey.PageUp):
+                Status.Scroll += Terminal.XTerm.Rows / 2;
+                return;
+
+            case true when Pressed(KeyboardKey.PageDown):
+                Status.Scroll -= Terminal.XTerm.Rows / 2;
+                return;
+        }
+
         // Chars
         int codepoint;
 
