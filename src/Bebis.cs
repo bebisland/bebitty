@@ -7,14 +7,14 @@ internal static class Bebis
 
     public static void Draw()
     {
-        var ascend = 0.6f + MathF.Sin(Time.Now) * 0.1f;
+        var ascend = 0.6f + MathF.Sin(Status.Time) * 0.1f;
 
         const float margin = 16f;
         const float height = 140f;
 
         var width = height * Tex.Width / Tex.Height;
-        var x     = Screen.Width  - width - margin;
-        var top   = Screen.Height - ascend * height;
+        var x     = Status.ScreenWidth  - width - margin;
+        var top   = Status.ScreenHeight - ascend * height;
 
         var src    = new Rectangle(0,              0,            Tex.Width, Tex.Height);
         var dest   = new Rectangle(x + width / 2f, top + height, width,     height);

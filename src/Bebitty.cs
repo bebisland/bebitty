@@ -1,4 +1,5 @@
-﻿using Raylib_cs;
+﻿using System.Text;
+using Raylib_cs;
 using static Raylib_cs.ConfigFlags;
 using static Raylib_cs.Raylib;
 
@@ -11,16 +12,22 @@ internal static class Bebitty
         InitWindow(1000, 600, "Bebitty");
         SetExitKey(KeyboardKey.Null);
 
-        Status.AtlasSize   = (int)Config.Terminal.FontSize;
-        Status.Font        = LoadFontEx(Config.Terminal.Font, Status.AtlasSize, Codepoints.Array, Codepoints.Count);
-        Status.BaseAdvance = MeasureTextEx(Status.Font, "M", Status.AtlasSize, 0).X;
-
-        Terminal.XTerm.Write("Welcome to Bebitty!");
+        Status.Update();
+        Pty.Send("");
 
         while (!WindowShouldClose())
         {
-            Time.Update();
-            Screen.Update();
+            Status.Update();
+
+            int codepoint;
+
+            while ((codepoint = GetCharPressed()) > 0)
+            {
+                if (codepoint < 32 || codepoint == 127 || !Rune.IsValid(codepoint))
+                    continue;
+
+                Pty.Send(char.ConvertFromUtf32(codepoint));
+            }
 
             BeginDrawing();
             ClearBackground(new Color(10, 10, 0, 240));

@@ -9,16 +9,11 @@ internal static class Terminal
 {
     public static readonly XTerm.Terminal XTerm;
 
+    public static Action<string>? Reply;
+
     static Terminal()
     {
-        XTerm = new XTerm.Terminal
-        (
-            new TerminalOptions
-            {
-                Cols = Math.Max(2, (int)((GetScreenWidth()  - Config.Terminal.PaddingX * 2) / Status.CellSize.X)),
-                Rows = Math.Max(2, (int)((GetScreenHeight() - Config.Terminal.PaddingY * 2) / Status.CellSize.Y))
-            }
-        );
+        XTerm = new XTerm.Terminal(new TerminalOptions { Cols = Status.Cols, Rows = Status.Rows });
     }
 
     private static BufferLine? GetLine(int absoluteLine)
