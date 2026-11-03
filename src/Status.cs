@@ -28,7 +28,13 @@ internal static class Status
 
     static Status()
     {
-        AddCodepoints(32, 126); // ASCII
+        AddCodepoints(32,    126);   // ASCII
+        AddCodepoints(160,   383);   // Latin-1, Latin Extended-A
+        AddCodepoints(8592,  8703);  // Arrows
+        AddCodepoints(8960,  9215);  // Technical Symbols
+        AddCodepoints(9472,  9727);  // Box Drawing, Blocks, Geometric Shapes
+        AddCodepoints(9728,  10175); // Misc Symbols
+        AddCodepoints(10240, 10495); // Braille
 
         FontAtlasSize   = (int)Config.Terminal.FontSize;
         Font            = LoadFontEx(Config.Terminal.Font, FontAtlasSize, [.. Codepoints], Codepoints.Count);

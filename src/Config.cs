@@ -12,5 +12,6 @@ internal static class Config
     public static class Colors
     {
         public const int Foreground = 0xCCCCCC;
+        public const int Background = 0xCCCCCC;
     }
 }

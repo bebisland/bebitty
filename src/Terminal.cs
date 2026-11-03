@@ -1,6 +1,7 @@
 using System.Numerics;
 using Raylib_cs;
 using XTerm.Buffer;
+using XTerm.Common;
 using XTerm.Options;
 using static Raylib_cs.Raylib;
 using static Util;
@@ -45,13 +46,41 @@ internal static class Terminal
                 if (cell.Width == 0)
                     continue;
 
+                ResolveColors
+                (
+                    XTerm.Colors.Take(),
+                    cell,
+                    XTerm.Options.DrawBoldTextInBrightColors,
+                    out var foreground,
+                    out var background
+                );
+
                 var bounds = GetCellBounds(column, cell.Width, XTerm.Cols, Status.CellSize.X);
 
-                var baseColor = Rgb(Config.Colors.Foreground, cell.Attributes.IsDim() ? (byte)140 : (byte)255);
+                var baseColor = Rgb(foreground, cell.Attributes.IsDim() ? (byte)140 : (byte)255);
 
                 DrawCell(cell, bounds.X, cellTop, cellHeightPx, Config.Terminal.FontSize, baseColor);
             }
         }
+    }
+
+    private static void ResolveColors(ColorSnapshot colors,
+                                      in BufferCell cell,
+                                      bool          boldBright,
+                                      out int       foreground,
+                                      out int       background)
+    {
+        foreground = colors.ResolveForeground(cell.Attributes, boldBright);
+        background = colors.ResolveBackground(cell.Attributes) ?? -1;
+
+        if (!cell.Attributes.IsInverse())
+            return;
+
+        var resolvedForeground = background == -1 ? Config.Colors.Background : background;
+        var resolvedBackground = foreground;
+
+        foreground = resolvedForeground;
+        background = resolvedBackground;
     }
 
     private static void DrawCell(in BufferCell cell, int left, int top, int height, float fontSize, Color color)
